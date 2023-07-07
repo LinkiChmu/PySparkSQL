@@ -1,6 +1,15 @@
 from pyspark.sql import SparkSession, Window
 from pyspark.sql.functions import col, row_number, lag
 
+"""Using data set 'covid-data.csv':
+1.Select the 15 countries with the highest percentage of recoveries as of March 31, 2021 
+(columns: iso_code, country, percentage of recoveries).
+2.Top 10 countries with the highest reported number of new cases in the last week of March 2021 
+in descending sorted order (columns: date, country, number of new cases).
+3. Calculate the change in cases relative to the previous day in Russia for the last week of March 2021.
+For example: in Russia yesterday there were 9150 , today 8763, difference: -387 
+(columns: date, number of new cases yesterday, number of new cases today, difference)
+"""
 spark = (SparkSession.builder
          .appName('PySparkSQL')
          .master('local[*]')
@@ -34,7 +43,8 @@ df_mart_last_week = (df_mart_last_week
                      .withColumn('row', row_number().over(window))
                      .where(col('row') == 1)
                      .drop('row')
-                     .sort(col('new_cases').desc()))
+                     .sort(col('new_cases').desc())
+                     )
 df_mart_last_week.show(10)
 
 df_rus = (df.select(
