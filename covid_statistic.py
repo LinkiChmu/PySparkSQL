@@ -27,8 +27,9 @@ df_recoveries_percentage = (df.select(
                                 (col('total_cases') / col('population') * 100).alias('recoveries_percentage'))
                             .where(col('date') == '2021-03-31')
                             .sort(col('recoveries_percentage').desc())
-                            )
-df_recoveries_percentage.show(15)
+                            .limit(15))
+df_recoveries_percentage.show()
+# df_recoveries_percentage.write.csv('task1', header=True)
 
 df_mart_last_week = (df.select(
                         'date',
@@ -44,8 +45,10 @@ df_mart_last_week = (df_mart_last_week
                      .where(col('row') == 1)
                      .drop('row')
                      .sort(col('new_cases').desc())
+                     .limit(10)
                      )
-df_mart_last_week.show(10)
+df_mart_last_week.show()
+df_mart_last_week.write.csv('task2', header=True)
 
 df_rus = (df.select(
                 'date',
@@ -55,7 +58,11 @@ df_rus = (df.select(
                 (col('date').between('2021-03-24', '2021-03-31'))))
 
 window_spec = Window.partitionBy().orderBy('date')
+
 rus_diff = (df_rus
             .withColumn('new_cases_yesterday', lag(col('new_cases_today')).over(window_spec))
-            .withColumn('diff', col('new_cases_today') - col('new_cases_yesterday')))
+            .withColumn('diff', col('new_cases_today') - col('new_cases_yesterday'))
+            .where(col('new_cases_yesterday').isNotNull())
+            )
 rus_diff.show()
+rus_diff.write.csv('task3', header=True)
