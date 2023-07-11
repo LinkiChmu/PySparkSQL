@@ -48,7 +48,7 @@ df_mart_last_week = (df_mart_last_week
                      .limit(10)
                      )
 df_mart_last_week.show()
-df_mart_last_week.write.csv('task2', header=True)
+# df_mart_last_week.write.csv('task2', header=True)
 
 df_rus = (df.select(
                 'date',
@@ -65,4 +65,4 @@ rus_diff = (df_rus
             .where(col('new_cases_yesterday').isNotNull())
             )
 rus_diff.show()
-rus_diff.write.csv('task3', header=True)
+# rus_diff.write.csv('task3', header=True)
